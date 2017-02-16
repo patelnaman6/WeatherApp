@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <title>MyApp</title>
+    <script src="ext-all.js"></script>
+    <script src="Globals.js"></script>
+    <script src="app.js"></script>
+    <script src="jquery-3.1.1.min.js"></script>
+    <script src="app/script.js"></script>
+    <script>
+        window.onload = function() {
+            /*var countryButton = Ext.create('Ext.Button', {
+                cls: 'countryButton',
+                text: 'Country',
+                arrowAlign: 'right',
+                menu: [
+                    {text: 'India'},
+                    {text: 'China'},
+                    {text: 'Bhutan'},
+                    {text: 'Nepal'}
+                ]
+            });*/
+
+            var countryButton = Ext.create('Ext.form.ComboBox', {
+                cls: 'graph-country-button',
+                fieldLabel: 'Choose Country',
+                store: globals.store3,
+                queryMode: 'remote',
+                displayField: 'country',
+                remoteFiler: true,
+                typeAhead: true,
+                value: 'India',
+                listeners: {
+                    'select': function() {
+                        globals.store.filter("country", countryButton.getRawValue());
+                    },
+                    'expand': function () {
+                        globals.store.clearFilter(true);
+                        globals.store.reload();
+                    }
+                }
+            });
+
+            var chart = Ext.create('Ext.chart.Chart', {
+                cls: 'chart',
+                width: 700,
+                height: 400,
+                store: globals.store,
+                axes: [
+                    {
+                        title: 'Temperature',
+                        type: 'Numeric',
+                        position: 'left',
+                        fields: ['temp'],
+                        minimum: 0,
+                        maximum: 100
+                    },
+                    {
+                        title: 'Date',
+                        type: 'Time',
+                        position: 'bottom',
+                        fields: ['date'],
+                        dateFormat: 'd-m-y'
+                    }
+                ],
+                series: [
+                    {
+                        type: 'column',
+                        xField: 'date',
+                        yField: 'temp'
+                    }
+                ]
+            });
+
+            /*var monthButton = Ext.create('Ext.Button', {
+                cls: 'monthButton',
+                text: 'Month',
+                arrowAlign: 'right',
+                menu: [
+                    {text: 'January'}, {text: 'February'}, {text: 'March'}, {text: 'April'},
+                    {text: 'May'}, {text: 'June'}, {text: 'July'}, {text: 'August'},
+                    {text: 'September'}, {text: 'October'}, {text: 'November'}, {text: 'December'}
+                ]
+            });*/
+
+            globals.viewport.removeAll();
+            globals.viewport.add(countryButton);
+            globals.viewport.add(chart);
+        }
+    </script>
+    <link type="text/css" rel="stylesheet" href="resources/css/ext-all.css">
+    <link type="text/css" rel="stylesheet" href="style.css">
+</head>
+<body>
+</body>
+</html>

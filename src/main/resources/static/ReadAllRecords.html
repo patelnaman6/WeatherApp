@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <title>MyApp</title>
+    <script src="ext-all.js"></script>
+    <script src="Globals.js"></script>
+    <script src="app.js"></script>
+    <script src="jquery-3.1.1.min.js"></script>
+    <script src="app/script.js"></script>
+    <script>
+
+        window.onload = function() {
+
+            var panel = Ext.create('Ext.grid.Panel', {
+                cls: 'grid',
+                title: 'Database Data',
+                store: globals.store2,
+                tools: [{
+                    type: 'plus',
+                    tooltip: 'Add a record',
+                    handler: function(click) {
+                        var panel = Ext.create('Ext.form.Panel', {
+                            title: 'Add Data Form',
+                            bodyPadding: 5,
+                            width: 600,
+                            cls: 'form',
+                            floating: true,
+                            closable: true,
+
+                            //The form will submit an AJAX request to this URL when submitted
+                            url: 'InsertData',
+
+                            // Fields will be arranged vertically, stretched to full width
+                            layout: 'auto',
+
+                            // The fields
+                            defaultType: 'textfield',
+                            items: [{
+                                cls: 'add-form-country',
+                                fieldLabel: 'Country',
+                                name: 'country',
+                                allowBlank: false
+                            }, {
+                                fieldLabel: 'Date',
+                                cls: 'add-form-date',
+                                name: 'date',
+                                xtype: 'datefield',
+                                format: 'd-M-Y',
+                                maxValue: new Date(),
+                                allowBlank: false
+                            }, {
+                                fieldLabel: 'Temperature',
+                                cls: 'add-form-temp',
+                                name: 'temp',
+                                xtype: 'numberfield',
+                                value: 30,
+                                allowBlank: false
+                            }],
+
+                            // Reset and Submit buttons
+                            buttons: [{
+                                text: 'Reset',
+                                cls: 'add-reset-button',
+                                handler: function() {
+                                    this.up('form').getForm().reset();
+                                }
+                            }, {
+                                text: 'Add',
+                                cls: 'add-submit-button',
+                                formBind: true, //only enabled once the form is valid
+                                disabled: true,
+                                handler: function() {
+                                    var form = this.up('form').getForm();
+                                    if(form.isValid()) {
+                                        console.log("valid form");
+                                        form.submit({
+                                            success: function(form, action) {
+                                                globals.store2.reload();
+                                                panel.close();
+                                                Ext.Msg.alert('Status', 'Record Added Successfully.');
+                                            },
+                                            failure: function(form, action) {
+                                                Ext.Msg.alert('Failed', action.result.msg);
+                                            }
+                                        });
+                                    }
+                                }
+                            }]
+                        });
+                        panel.show();
+                    }
+                }],
+                columns: [
+                    {text: 'Country', dataIndex: 'country'},
+                    {text: 'Date', dataIndex: 'date'},
+                    {text: 'Temperature', dataIndex: 'temp'},
+                    {
+                        xtype: 'actioncolumn',
+                        text: 'Actions',
+                        width: 50,
+                        margin: 5,
+                        items: [{
+                                icon: 'resources/images/edit.png',
+                                iconCls: 'action-update',
+                                tooltip: 'Update',
+                                handler: function (grid, rowIndex, colIndex) {
+                                    var rec = grid.getStore().getAt(rowIndex);
+                                    var country = rec.get('country');
+                                    var date = rec.get('date');
+                                    console.log(typeof date);
+                                    var temp = rec.get('temp');
+                                    var id = rec.get('id');
+                                    var updateData;
+                                    var panel = Ext.create('Ext.form.Panel', {
+                                        title: 'Update Data Form',
+                                        //bodyPadding: 5,
+                                        width: 400,
+                                        height: 200,
+                                        cls: 'form',
+                                        floating: true,
+                                        closable: true,
+
+                                        //The form will submit an AJAX request to this URL when submitted
+                                        //url: 'UpdateData',
+
+                                        // Fields will be arranged vertically, stretched to full width
+                                        layout: 'auto',
+                                       /* defaults: {
+                                            anchor: '100%'
+                                        },*/
+
+                                        // The fields
+                                        defaultType: 'textfield',
+                                        items: [{
+                                            cls: 'update-form-country',
+                                            fieldLabel: 'Country',
+                                            name: 'country',
+                                            allowBlank: false,
+                                            value: country
+                                        }, {
+                                            fieldLabel: 'Date',
+                                            cls: 'update-form-date',
+                                            name: 'date',
+                                            xtype: 'datefield',
+                                            maxValue: new Date(),
+                                            format: 'd-M-Y',
+                                            value: new Date(date),
+                                            allowBlank: false
+                                        }, {
+                                            fieldLabel: 'Temperature',
+                                            cls: 'update-form-temp',
+                                            name: 'temp',
+                                            xtype: 'numberfield',
+                                            value: temp,
+                                            allowBlank: false
+                                        }],
+
+                                        // Reset and Submit buttons
+                                        buttons: [{
+                                            text: 'Reset',
+                                            cls: 'update-reset-button',
+                                            handler: function () {
+                                                this.up('form').getForm().reset();
+                                            }
+                                        }, {
+                                            text: 'Update',
+                                            cls: 'update-submit-button',
+                                            formBind: true, //only enabled once the form is valid
+                                            disabled: true,
+                                            handler: function () {
+                                                var form = this.up('form').getForm();
+                                                if (form.isValid()) {
+                                                    var values = form.getValues();
+                                                    var country = values['country'];
+                                                    var date = values['date'];
+                                                    var temp = values['temp'];
+                                                    $.ajax({
+                                                        type: 'PUT',
+                                                        url: 'UpdateData' + '?' + $.param({"country" : country, "temp" : temp, "date" : date, "id" : id}),
+                                                        data: updateData,
+                                                        dataType: 'json',
+                                                        success: function () {
+                                                            grid.getStore().reload();
+                                                            panel.close();
+                                                            Ext.Msg.alert('Status', 'Record Updated Successfully.');
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }]
+                                    });
+                                    panel.show();
+                                },
+                                scope: this
+                            },
+                            {
+                                icon: 'resources/images/delete.png',
+                                iconCls: 'action-delete',
+                                tooltip: 'Delete',
+                                html: 'delete',
+                                handler: function (grid, rowIndex, colIndex) {
+                                    var rec = grid.getStore().getAt(rowIndex);
+                                    var country = rec.get('country');
+                                    var date = rec.get('date');
+                                    var id = rec.get('id');
+                                    var deleteData = {
+                                        "country": country,
+                                        "date": date
+                                    };
+                                    $.ajax({
+                                        type: 'DELETE',
+                                        url: 'DeleteData' + '?' + $.param({"id" : id}),
+                                        data: deleteData,
+                                        dataType: 'json',
+                                        success: function () {
+                                            grid.getStore().reload();
+                                            Ext.Msg.alert('Status', 'Record Deleted Successfully.');
+                                        }
+                                    });
+                                },
+                                scope: this
+                            }]
+                    }
+                ],
+                height: 200,
+                width: 500
+            });
+
+            globals.viewport.removeAll();
+            globals.viewport.add(panel);
+        }
+        </script>
+    <link type="text/css" rel="stylesheet" href="resources/css/ext-all.css">
+    <link type="text/css" rel="stylesheet" href="style.css">
+</head>
+<body>
+</body>
+</html>

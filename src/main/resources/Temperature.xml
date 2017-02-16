@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="Temperature.Temperature">
+
+    <insert id="insert" parameterType="Temperature.Temperature">
+        INSERT INTO TEMPERATURE VALUES (${country}, ${spe_date}, ${temp}, ID_SEQ.NEXTVAL)
+    </insert>
+
+    <update id="update" parameterType="Temperature.Temperature">
+        UPDATE TEMPERATURE SET TEMP = ${temp}, COUNTRY = ${country}, SPE_DATE = ${spe_date} WHERE U_ID = ${id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE from TEMPERATURE WHERE U_ID = #{id}
+    </delete>
+
+    <select id="getAll" resultMap="result">
+        SELECT * FROM TEMPERATURE
+    </select>
+
+    <select id="getAllChart" resultMap="chart">
+        SELECT DISTINCT COUNTRY FROM TEMPERATURE
+    </select>
+
+    <select id="getSpecific" resultMap="result" parameterType="Temperature.Temperature">
+        SELECT * FROM TEMPERATURE WHERE COUNTRY = ${country} AND SPE_DATE = ${spe_date}
+    </select>
+
+    <resultMap id="result" type="Temperature.Temperature">
+        <result property="country" column="COUNTRY"/>
+        <result property="spe_date" column="SPE_DATE"/>
+        <result property="temp" column="TEMP"/>
+        <result property="id" column="U_ID"/>
+    </resultMap>
+
+    <resultMap id="chart" type="Temperature.Temperature">
+        <result property="country" column="COUNTRY"/>
+    </resultMap>
+
+</mapper>

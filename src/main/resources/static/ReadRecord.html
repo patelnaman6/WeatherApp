@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <title>MyApp</title>
+    <script src="ext-all.js"></script>
+    <!--<script src="app/Application.js"></script>-->
+    <script src="app.js"></script>
+    <script src="jquery-3.1.1.min.js"></script>
+    <script src="app/script.js"></script>
+    <script>
+        /*Ext.create('Ext.form.Panel', {
+            title: 'Add Data Form',
+            bodyPadding: 5,
+            width: 350,
+            cls: 'form',
+
+            //The form will submit an AJAX request to this URL when submitted
+            //url: 'save-form.php',
+
+            // Fields will be arranged vertically, stretched to full width
+            layout: 'anchor',
+            defaults: {
+                anchor: '100%'
+            },
+
+            // The fields
+            defaultType: 'textfield',
+            items: [{
+                cls: 'form-country',
+                fieldLabel: 'Country',
+                name: 'country',
+                allowBlank: false
+            },{
+                fieldLabel: 'Month',
+                cls: 'form-month',
+                name: 'month',
+                allowBlank: false
+            }, {
+                fieldLabel: 'Date',
+                cls: 'form-date',
+                name: 'date',
+                xtype: 'datefield',
+                maxValue: new Date(),
+                allowBlank: false
+            }],
+
+            // Reset and Submit buttons
+            buttons: [{
+                text: 'Submit',
+                cls: 'submit-button',
+                formBind: true, //only enabled once the form is valid
+                disabled: true/!*,
+                 handler: function() {
+                 var form = this.up('form').getForm();
+                 if (form.isValid()) {
+                 form.submit({
+                 success: function(form, action) {
+                 Ext.Msg.alert('Success', action.result.msg);
+                 },
+                 failure: function(form, action) {
+                 Ext.Msg.alert('Failed', action.result.msg);
+                 }
+                 });
+                 }
+                 }*!/
+            }],
+            renderTo: Ext.getBody()
+        });*/
+    </script>
+    <link type="text/css" rel="stylesheet" href="resources/css/ext-all.css">
+    <link type="text/css" rel="stylesheet" href="style.css">
+</head>
+<body>
+</body>
+</html>

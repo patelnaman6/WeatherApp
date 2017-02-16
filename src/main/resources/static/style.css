@@ -1,0 +1,99 @@
+/*
+* {
+    text-align: center;
+    margin: 8px auto 8px auto;
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+h3 {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+#view {
+    margin-top: 70px;
+}
+
+.month, .country {
+    margin-right: 30px;
+    margin-left: 30px;
+    margin-bottom: 20px;
+    clear: both;
+    display: inline-block;
+}
+
+.chart {
+    position: relative;
+    clear: both;
+    margin-top: 300px;
+}
+
+.grid {
+    margin-top: 250px;
+}
+
+.countryButton, .monthButton {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 300px;
+}
+
+.welcome, .heading, .index-add, .index-update, .index-delete, .index-fetch-button, .index-graph-button, .sub-heading {
+    margin: 300px auto 10px;
+}
+
+.index-add, .index-update, .index-delete, .index-fetch-button, .index-graph-button {
+    margin-top: -280px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.sub-heading {
+    margin-top: 0;
+}
+
+.welcome {
+    margin-bottom: 30px;
+}
+
+.graph-country-button {
+    margin-bottom: -300px;
+    padding: 0;
+}
+
+.graph-country-button, .chart{
+    margin-top: 300px;
+}
+
+.graph-month-button {
+    margin-top: 20px;
+}
+
+.action-update {
+    margin-right: 5px;
+}*/
+* {
+    text-align: center;
+}
+
+.welcome, .sub-heading, .grid, .chart-date, .chart-temp {
+    margin: 30px auto 30px auto;
+}
+
+.form, .add-form-country, .add-form-temp, .add-form-date, .update-form-country, .update-form-date, .update-form-temp, .add-reset-button, .update-submit-button, .update-reset-button {
+    margin: 5px auto 5px auto;
+}
+.graph-country-button {
+    margin: 0 auto 0 auto;
+}
+
+.action-update {
+    margin-right: 5px;
+}
+
+.chart {
+    margin: 20px auto 20px auto;
+}
