@@ -34,7 +34,6 @@ Ext.define('MyApp.Application', {
         });
 
         globals.store2 = Ext.create('Ext.data.Store',{
-            //fields: ["country", "temp"],
             fields: [{name: 'country'}, {name: 'temp'}],
             autoLoad: true,
             proxy: {
@@ -74,24 +73,28 @@ Ext.define('MyApp.Application', {
             title: 'Database Data',
             store: globals.store,
             tools: [{
+                type:'refresh',
+                tooltip: 'Refresh form Data',
+                // hidden:true,
+                handler: function(event, toolEl, panelHeader) {
+                    // refresh logic
+                    globals.store3.clearFilter();
+                    globals.store3.reload();
+                }
+            },{
                 type: 'plus',
                 tooltip: 'Add a record',
                 handler: function(click) {
                     var panel = Ext.create('Ext.form.Panel', {
                         title: 'Add Data Form',
                         bodyPadding: 5,
-                        width: 600,
+                        width: 350,
+                        height: 160,
                         cls: 'form',
                         floating: true,
                         closable: true,
-
-                        //The form will submit an AJAX request to this URL when submitted
                         url: 'InsertData',
-
-                        // Fields will be arranged vertically, stretched to full width
                         layout: 'auto',
-
-                        // The fields
                         defaultType: 'textfield',
                         items: [{
                             cls: 'add-form-country',
@@ -134,6 +137,8 @@ Ext.define('MyApp.Application', {
                                     form.submit({
                                         success: function(form, action) {
                                             globals.store.reload();
+                                            globals.store3.clearFilter();
+                                            globals.store3.reload();
                                             panel.close();
                                             Ext.Msg.alert('Status', 'Record Added Successfully.');
                                         },
@@ -150,7 +155,7 @@ Ext.define('MyApp.Application', {
             }],
             columns: [
                 {text: 'Country', dataIndex: 'country', cls: 'col-country'},
-                {text: 'Date', dataIndex: 'date',cls: 'col-date'},
+                {text: 'Date', dataIndex: 'date',cls: 'col-date', xtype: 'datecolumn', format: 'd-M-Y'},
                 {text: 'Temperature', dataIndex: 'temp',cls: 'col-temp'},
                 {
                     xtype: 'actioncolumn',
@@ -172,19 +177,13 @@ Ext.define('MyApp.Application', {
                             var panel = Ext.create('Ext.form.Panel', {
                                 title: 'Update Data Form',
                                 //bodyPadding: 5,
-                                width: 400,
-                                height: 200,
+                                width: 350,
+                                height: 160,
                                 cls: 'form',
                                 floating: true,
                                 closable: true,
 
-                                //The form will submit an AJAX request to this URL when submitted
-                                //url: 'UpdateData',
-
-                                // Fields will be arranged vertically, stretched to full width
                                 layout: 'auto',
-
-                                // The fields
                                 defaultType: 'textfield',
                                 items: [{
                                     cls: 'update-form-country',
@@ -210,7 +209,6 @@ Ext.define('MyApp.Application', {
                                     allowBlank: false
                                 }],
 
-                                // Reset and Submit buttons
                                 buttons: [{
                                     text: 'Reset',
                                     cls: 'update-reset-button',
@@ -236,6 +234,7 @@ Ext.define('MyApp.Application', {
                                                 dataType: 'json',
                                                 success: function () {
                                                     grid.getStore().reload();
+                                                    globals.store3.reload();
                                                     panel.close();
                                                     Ext.Msg.alert('Status', 'Record Updated Successfully.');
                                                 }
@@ -269,6 +268,7 @@ Ext.define('MyApp.Application', {
                                     dataType: 'json',
                                     success: function () {
                                         grid.getStore().reload();
+                                        globals.store3.reload();
                                         Ext.Msg.alert('Status', 'Record Deleted Successfully.');
                                     }
                                 });
@@ -294,6 +294,7 @@ Ext.define('MyApp.Application', {
             cls: 'chart',
             width: 700,
             height: 400,
+            animate: true,
             store: globals.store3,
             axes: [
                 {
@@ -303,19 +304,36 @@ Ext.define('MyApp.Application', {
                     position: 'left',
                     fields: ['temp'],
                     minimum: 0,
-                    maximum: 100
+                    maximum: 100,
+                    majorTickSteps :1,
+                    minorTickSteps :1,
+                    adjustMinimumByMajorUnit : true,
+                    adjustMaximumByMinorUnit : true
                 },
                 {
                     title: 'Date',
                     cls: 'chart-date',
-                    type: 'Time',
+                    type: 'Category',
                     position: 'bottom',
                     fields: ['date'],
-                    dateFormat: 'd-m-y'
+                    stringformat: 'd-M-Y',
+                    majorTickSteps :1,
+                    minorTickSteps :1,
+                    adjustMinimumByMajorUnit : true,
+                    adjustMaximumByMinorUnit : true
                 }
             ],
             series: [
                 {
+                    highlight: true,
+                    tips: {
+                        trackMouse: true,
+                        width: 175,
+                        height: 28,
+                        renderer: function(storeItem, item) {
+                            this.setTitle('Temp: '+storeItem.get('temp') + '   Date: ' + storeItem.get('date'));
+                        }
+                    },
                     type: 'column',
                     xField: 'date',
                     yField: 'temp'
@@ -324,396 +342,8 @@ Ext.define('MyApp.Application', {
         });
 
         globals.viewport.add(welcomeMessage);
-        // globals.viewport.add(buttonHeading);
-       /* globals.viewport.add(add);
-        globals.viewport.add(update);
-        globals.viewport.add(del);
-        globals.viewport.add(read);
-        globals.viewport.add(statistics);*/
         globals.viewport.add(panel);
-        //globals.viewport.add(countryButton);
         globals.viewport.add(chart);
 
     }
 });
-
-
-/*
-Ext.create('Ext.form.Panel', {
-    title: 'Add Data Form',
-    bodyPadding: 5,
-    width: 350,
-    cls: 'form',
-
-    //The form will submit an AJAX request to this URL when submitted
-    //url: 'save-form.php',
-
-    // Fields will be arranged vertically, stretched to full width
-    layout: 'fit',
-    defaults: {
-        anchor: '100%'
-    },
-
-    // The fields
-    defaultType: 'textfield',
-    items: [{
-        cls: 'form-country',
-        fieldLabel: 'Country',
-        name: 'country',
-        allowBlank: false
-    }, {
-        fieldLabel: 'Month',
-        cls: 'form-month',
-        name: 'month',
-        allowBlank: false
-    }, {
-        fieldLabel: 'Date',
-        cls: 'form-date',
-        name: 'date',
-        xtype: 'datefield',
-        maxValue: new Date(),
-        allowBlank: false
-    }, {
-        fieldLabel: 'Temperature',
-        cls: 'form-temp',
-        name: 'temp',
-        xtype: 'numberfield',
-        value: 30,
-        allowBlank: false
-    }],
-
-    // Reset and Submit buttons
-    buttons: [{
-        text: 'Reset',
-        cls: 'reset-button'
-        /!*,
-         handler: function() {
-         this.up('form').getForm().reset();
-         }*!/
-    }, {
-        text: 'Add',
-        cls: 'submit-button',
-        formBind: true, //only enabled once the form is valid
-        disabled: true
-        /!*,
-         handler: function() {
-         var form = this.up('form').getForm();
-         if (form.isValid()) {
-         form.submit({
-         success: function(form, action) {
-         Ext.Msg.alert('Success', action.result.msg);
-         },
-         failure: function(form, action) {
-         Ext.Msg.alert('Failed', action.result.msg);
-         }
-         });
-         }
-         }*!/
-    }],
-    renderTo: viewport
-});
-
-Ext.create('Ext.form.Panel', {
-    title: 'Update Data Form',
-    bodyPadding: 5,
-    width: 350,
-    cls: 'form',
-
-    //The form will submit an AJAX request to this URL when submitted
-    //url: 'save-form.php',
-
-    // Fields will be arranged vertically, stretched to full width
-    layout: 'anchor',
-    defaults: {
-        anchor: '100%'
-    },
-
-    // The fields
-    defaultType: 'textfield',
-    items: [{
-        cls: 'form-country',
-        fieldLabel: 'Country',
-        name: 'country',
-        allowBlank: false
-    }, {
-        fieldLabel: 'Month',
-        cls: 'form-month',
-        name: 'month',
-        allowBlank: false
-    }, {
-        fieldLabel: 'Date',
-        cls: 'form-date',
-        name: 'date',
-        xtype: 'datefield',
-        maxValue: new Date(),
-        allowBlank: false
-    }, {
-        fieldLabel: 'Temperature',
-        cls: 'form-temp',
-        name: 'temp',
-        xtype: 'numberfield',
-        value: 30,
-        allowBlank: false
-    }],
-
-    // Reset and Submit buttons
-    buttons: [{
-        text: 'Reset',
-        cls: 'reset-button'
-        /!*,
-         handler: function() {
-         this.up('form').getForm().reset();
-         }*!/
-    }, {
-        text: 'Update',
-        cls: 'submit-button',
-        formBind: true, //only enabled once the form is valid
-        disabled: true
-        /!*,
-         handler: function() {
-         var form = this.up('form').getForm();
-         if (form.isValid()) {
-         form.submit({
-         success: function(form, action) {
-         Ext.Msg.alert('Success', action.result.msg);
-         },
-         failure: function(form, action) {
-         Ext.Msg.alert('Failed', action.result.msg);
-         }
-         });
-         }
-         }*!/
-    }],
-    renderTo: viewport
-});
-
-Ext.create('Ext.form.Panel', {
-    title: 'Add Data Form',
-    bodyPadding: 5,
-    width: 350,
-    cls: 'form',
-
-    //The form will submit an AJAX request to this URL when submitted
-    //url: 'save-form.php',
-
-    // Fields will be arranged vertically, stretched to full width
-    layout: 'anchor',
-    defaults: {
-        anchor: '100%'
-    },
-
-    // The fields
-    defaultType: 'textfield',
-    items: [{
-        cls: 'form-country',
-        fieldLabel: 'Country',
-        name: 'country',
-        allowBlank: false
-    },{
-        fieldLabel: 'Month',
-        cls: 'form-month',
-        name: 'month',
-        allowBlank: false
-    }, {
-        fieldLabel: 'Date',
-        cls: 'form-date',
-        name: 'date',
-        xtype: 'datefield',
-        maxValue: new Date(),
-        allowBlank: false
-    }],
-
-    // Reset and Submit buttons
-    buttons: [{
-        text: 'Submit',
-        cls: 'submit-button',
-        formBind: true, //only enabled once the form is valid
-        disabled: true/!*,
-         handler: function() {
-         var form = this.up('form').getForm();
-         if (form.isValid()) {
-         form.submit({
-         success: function(form, action) {
-         Ext.Msg.alert('Success', action.result.msg);
-         },
-         failure: function(form, action) {
-         Ext.Msg.alert('Failed', action.result.msg);
-         }
-         });
-         }
-         }*!/
-    }],
-    renderTo: viewport
-});
-
-Ext.create('Ext.form.Panel', {
-    title: 'Add Data Form',
-    bodyPadding: 5,
-    width: 350,
-    cls: 'form',
-
-    //The form will submit an AJAX request to this URL when submitted
-    //url: 'save-form.php',
-
-    // Fields will be arranged vertically, stretched to full width
-    layout: 'anchor',
-    defaults: {
-        anchor: '100%'
-    },
-
-    // The fields
-    defaultType: 'textfield',
-    items: [{
-        cls: 'form-country',
-        fieldLabel: 'Country',
-        name: 'country',
-        allowBlank: false
-    },{
-        fieldLabel: 'Month',
-        cls: 'form-month',
-        name: 'month',
-        allowBlank: false
-    }, {
-        fieldLabel: 'Date',
-        cls: 'form-date',
-        name: 'date',
-        xtype: 'datefield',
-        maxValue: new Date(),
-        allowBlank: false
-    }],
-
-    buttons: [{
-        text: 'Submit',
-        cls: 'submit-button',
-        formBind: true, //only enabled once the form is valid
-        disabled: true/!*,
-         handler: function() {
-         var form = this.up('form').getForm();
-         if (form.isValid()) {
-         form.submit({
-         success: function(form, action) {
-         Ext.Msg.alert('Success', action.result.msg);
-         },
-         failure: function(form, action) {
-         Ext.Msg.alert('Failed', action.result.msg);
-         }
-         });
-         }
-         }*!/
-    }],
-    renderTo: viewport
-});
-
-Ext.define('WeatherData', {
-    extend: 'Ext.data.Model',
-    fields: ['country', 'month', 'date', 'temperature']
-});
-
-var store2 = Ext.create('Ext.data.Store', {
-    model: 'WeatherData',
-    data: [
-        {country: 'India', month: 'Jan', temperature: 58, date: new Date(2011, 0, 8)},
-        {country: 'India', month: 'Jan', temperature: 63, date: new Date(2011, 0, 9)},
-        {country: 'India', month: 'Jan', temperature: 73, date: new Date(2011, 0, 10)},
-        {country: 'India', month: 'Jan', temperature: 78, date: new Date(2011, 0, 11)},
-        {country: 'India', month: 'Jan', temperature: 81, date: new Date(2011, 0, 12)},
-        {country: 'India', month: 'Jan', temperature: 61, date: new Date(2011, 0, 13)},
-        {country: 'India', month: 'Jan', temperature: 23, date: new Date(2011, 0, 14)},
-        {country: 'India', month: 'Jan', temperature: 54, date: new Date(2011, 0, 15)},
-        {country: 'India', month: 'Jan', temperature: 90, date: new Date(2011, 0, 16)},
-        {country: 'India', month: 'Jan', temperature: 56, date: new Date(2011, 0, 17)}
-    ]
-});
-
-Ext.create('Ext.grid.Panel', {
-    cls: 'grid',
-    title: 'Database Data',
-    store: store2,
-    columns: [
-        {text: 'Country', dataIndex: 'country'},
-        {text: 'Month', dataIndex: 'month'},
-        {text: 'Date', dataIndex: 'date'},
-        {text: 'Temperature', dataIndex: 'temperature'}
-    ],
-    height: 200,
-    width: 400,
-    renderTo: viewport
-});
-
-Ext.define('WeatherPoint', {
-    extend: 'Ext.data.Model',
-    fields: ['temperature', 'date']
-});
-
-var store = Ext.create('Ext.data.Store', {
-    model: 'WeatherPoint',
-    data: [
-        {temperature: 58, date: new Date(2011, 0, 8)},
-        {temperature: 63, date: new Date(2011, 0, 9)},
-        {temperature: 73, date: new Date(2011, 0, 10)},
-        {temperature: 78, date: new Date(2011, 0, 11)},
-        {temperature: 81, date: new Date(2011, 0, 12)},
-        {temperature: 61, date: new Date(2011, 0, 13)},
-        {temperature: 23, date: new Date(2011, 0, 14)},
-        {temperature: 54, date: new Date(2011, 0, 15)},
-        {temperature: 90, date: new Date(2011, 0, 16)},
-        {temperature: 56, date: new Date(2011, 0, 17)}
-    ]
-});
-
-Ext.create('Ext.Button', {
-    cls: 'country',
-    text: 'Country',
-    renderTo: viewport,
-    arrowAlign: 'right',
-    menu: [
-        {text: 'India'},
-        {text: 'China'},
-        {text: 'Bhutan'},
-        {text: 'Nepal'}
-    ]
-});
-
-Ext.create('Ext.chart.Chart', {
-    cls: 'chart',
-    renderTo: viewport,
-    width: 400,
-    height: 300,
-    store: store,
-    axes: [
-        {
-            title: 'Temperature',
-            type: 'Numeric',
-            position: 'left',
-            fields: ['temperature'],
-            minimum: 0,
-            maximum: 100
-        },
-        {
-            title: 'Date',
-            type: 'Time',
-            position: 'bottom',
-            fields: ['date'],
-            dateFormat: 'd-m-y'
-        }
-    ],
-    series: [
-        {
-            type: 'column',
-            xField: 'date',
-            yField: 'temperature'
-        }
-    ]
-});
-
-Ext.create('Ext.Button', {
-    cls: 'month',
-    text: 'Month',
-    renderTo: viewport,
-    arrowAlign: 'right',
-    menu: [
-        {text: 'January'}, {text: 'February'}, {text: 'March'}, {text: 'April'},
-        {text: 'May'}, {text: 'June'}, {text: 'July'}, {text: 'August'},
-        {text: 'September'}, {text: 'October'}, {text: 'November'}, {text: 'December'}
-    ]
-});*/
