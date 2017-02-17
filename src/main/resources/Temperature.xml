@@ -13,8 +13,8 @@
         UPDATE TEMPERATURE SET TEMP = ${temp}, COUNTRY = ${country}, SPE_DATE = ${spe_date} WHERE U_ID = ${id}
     </update>
 
-    <delete id="delete" parameterType="int">
-        DELETE from TEMPERATURE WHERE U_ID = #{id}
+    <delete id="delete" parameterType="Temperature.Temperature">
+        DELETE from TEMPERATURE WHERE U_ID = ${id}
     </delete>
 
     <select id="getAll" resultMap="result">

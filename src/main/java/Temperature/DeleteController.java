@@ -20,8 +20,9 @@ public class DeleteController {
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
         SqlSession session = sqlSessionFactory.openSession();
         //Delete operation
+        Temperature temp = new Temperature(" "," ", 0, id);
         try {
-            session.delete("Temperature.Temperature.delete", id);
+            session.delete("Temperature.Temperature.delete", temp);
         }
         catch(Exception e) {
             System.out.println(e.getMessage());
